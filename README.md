@@ -4,38 +4,37 @@ This Repository contains the solutions to the AI for Health Task to be done for 
 
 **Directory Structure** :
 
-Project Root/ 
-|
-|-- Data/
-|   |-- AP01/
-|       |-- nasal_airflow.txt
-|       |-- thoracic_movement.txt
-|       |-- spo2.txt
-|       |-- flow_events.txt
-|       |-- sleep_profile.txt
-|        . . . . . . . . 
-|
-|-- Visualizations/
-|   |-- AP01_visualization.pdf
-|   . . . . . . . . 
-|   . . . . . . . . 
-|
-|-- Dataset/
-|   |-- breathing_dataset.csv
-|   |-- sleep_stage_dataset.csv
-|
-|-- models/
-|   |-- cnn_model.py
-|   |-- conv_lstm_model.py
-|
-|-- scripts/
-|   |-- vis.py
-|   |-- create_dataset.py
-|   |-- train_model.py
-|
-|-- README.md
-|-- requirements.txt
-|-- report.pdf
+SRIP26-AI_for_Health/
+│
+├── Data/
+│ ├── AP01/
+│ │ ├── nasal_airflow.txt
+│ │ ├── thoracic_movement.txt
+│ │ ├── spo2.txt
+│ │ ├── flow_events.txt
+│ │ └── sleep_profile.txt
+│ ├── AP02/
+│ └── ...
+│
+├── Visualizations/
+│ ├── AP01_visualization.pdf
+│ └── ...
+│
+├── Dataset/
+│ ├── breathing_dataset.csv
+│ └── sleep_stage_dataset.csv
+│
+├── models/
+│ └── cnn_model.py
+│
+├── scripts/
+│ ├── vis.py
+│ ├── create_dataset.py
+│ └── train_model.py
+│
+├── report.pdf
+├── requirements.txt
+└── README.md
 
 **How to Run** :
 
