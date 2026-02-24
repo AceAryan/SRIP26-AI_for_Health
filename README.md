@@ -39,11 +39,21 @@ Project Root/
 
 **How to Run** :
 
-For Generating Sleep Visualization PDF, Use the following command from root directory:
+(Use the following command from root directory)
+For Generating Sleep Visualization PDF:
 ```bash 
 python Scripts/vis.py -name "Data/AP05"
 ```
 For Generating Dataset after filtering and processing data into labeled windows:
+```bash
+python Scripts/create_dataset.py -in_dir "Data" -out_dir "Dataset"
+```
+
+For Training the 1D CNN Model:
+```bash
+python scripts/train_model.py -data_dir "Dataset"
+```
+
 **Acknowledgement** : I have used the help of Google to search upon the documentations of libraries and help to find out what tool I can use for performing a certain action. I have also used Github Copilot for Identifying Syntax Errors and Chatgpt to find edgecases and make the code better. I have tried my best to do the Task myself and limit the usage of these tools.
 
 **Submitted By** :
