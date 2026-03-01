@@ -53,7 +53,7 @@ For Training the 1D CNN Model:
 python scripts/train_model.py -data_dir "Dataset"
 ```
 
-**Acknowledgement** : I have used the help of Google to search upon the documentations of libraries and help to find out what tool I can use for performing a certain action. I have also used Github Copilot for Identifying Syntax Errors and Chatgpt to find edgecases and make the code better. I have tried my best to do the Task myself and limit the usage of these tools.
+**Acknowledgement** : I have used the help of Google to search upon the documentations of libraries and help to find out what tool I can use for performing a certain action. I have also used Chatgpt to find edgecases and fix syntax errors. I have tried my best to do the Task myself and limit the usage of these tools.
 
 **Submitted By** :
 Aryan Kumar
