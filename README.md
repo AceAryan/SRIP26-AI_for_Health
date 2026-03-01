@@ -3,7 +3,7 @@
 This Repository contains the solutions to the AI for Health Task to be done for applying to Sustainibility Lab for SRIP 26.
 
 **Directory Structure** :
-
+```
 SRIP26-AI_for_Health/
 │
 ├── Data/
@@ -35,7 +35,7 @@ SRIP26-AI_for_Health/
 ├── report.pdf
 ├── requirements.txt
 └── README.md
-
+```
 **How to Run** :
 
 (Use the following command from root directory)
