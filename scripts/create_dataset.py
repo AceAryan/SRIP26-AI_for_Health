@@ -43,7 +43,7 @@ def create_windows(df, events, fs):
             overlap_start = max(window_start_time, ev['start'])
             overlap_end = min(window_end_time, ev['end'])
 
-            overlap = (overlap_end - overlap_start).total_seconds()
+            overlap = max(0,(overlap_end - overlap_start).total_seconds())
 
             if overlap > best_overlap  :  # the event with maximum overlap 
                 best_overlap = overlap
@@ -65,20 +65,32 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('-in_dir', required=True)
     parser.add_argument('-out_dir', required=True)
-    parser.add_argument('--force', action='store_true') # use this flag to regenerate all datasets
+    parser.add_argument(
+        '-name',
+        nargs='+',
+        help='Participant names to process (eg. AP01 AP02)'
+    )
     args = parser.parse_args()
 
     os.makedirs(args.out_dir, exist_ok=True)
 
-    for participant in os.listdir(args.in_dir):
+    all_participants = sorted(os.listdir(args.in_dir))
+
+    if args.name:
+        participants_to_process = args.name
+    else:
+        participants_to_process = all_participants
+
+    for participant in participants_to_process:
+
         folder = os.path.join(args.in_dir, participant)
 
         if not os.path.isdir(folder):
+            print(f"{participant} not found, skipping.")
             continue
 
         print(f"Processing {participant}...")
 
-        # finding participant data files
         flow_file = None
         event_file = None
 
@@ -96,17 +108,13 @@ def main():
         events = load_events(event_file)
 
         dt = (df['timestamp'].iloc[1] - df['timestamp'].iloc[0]).total_seconds()
-        fs = 1 / dt # estimating sampling frequency
+        fs = 1 / dt
 
-        df['value'] = bandpass_filter(df['value'].values, fs) # filter
+        df['value'] = bandpass_filter(df['value'].values, fs)
 
         out_path = os.path.join(args.out_dir, f"{participant}_dataset.csv")
 
-        if os.path.exists(out_path) and not args.force:
-            print(f"Skipping {participant} (already processed)") # only generated datasets which don't exist
-            continue
-
-        dataset = create_windows(df, events, fs) 
+        dataset = create_windows(df, events, fs)
         dataset.to_csv(out_path, index=False)
 
         print(f"Saved: {out_path}")
