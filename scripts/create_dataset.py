@@ -65,6 +65,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('-in_dir', required=True)
     parser.add_argument('-out_dir', required=True)
+    parser.add_argument('--force', action='store_true')
     args = parser.parse_args()
 
     os.makedirs(args.out_dir, exist_ok=True)
@@ -99,8 +100,13 @@ def main():
 
         df['value'] = bandpass_filter(df['value'].values, fs) # filter
 
-        dataset = create_windows(df, events, fs) # creating dataset
-        out_path = os.path.join(args.out_dir, f"{participant}_dataset.csv") # saving dataset
+        out_path = os.path.join(args.out_dir, f"{participant}_dataset.csv")
+
+        if os.path.exists(out_path) and not args.force:
+            print(f"Skipping {participant} (already processed)")
+            continue
+
+        dataset = create_windows(df, events, fs) 
         dataset.to_csv(out_path, index=False)
 
         print(f"Saved: {out_path}")
