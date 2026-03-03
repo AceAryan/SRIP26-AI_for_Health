@@ -4,63 +4,13 @@ import numpy as np
 import pandas as pd
 from scipy.signal import butter, filtfilt
 
-def load_signal(filepath):
-    with open(filepath, 'r') as f:
-        lines = f.readlines()
-
-    data_start = 0
-    for i, line in enumerate(lines):
-        if line.strip() == 'Data:':
-            data_start = i + 1
-            break
-
-    timestamps = []
-    values = []
-
-    for line in lines[data_start:]:
-        if not line.strip():
-            continue
-        ts_str, val_str = line.split(';')
-        ts_str = ts_str.strip().replace(',', '.')
-        timestamps.append(pd.to_datetime(ts_str, format='%d.%m.%Y %H:%M:%S.%f'))
-        values.append(float(val_str.strip()))
-
-    return pd.DataFrame({'timestamp': timestamps, 'value': values})
-
-def load_events(filepath):
-    events = []
-
-    with open(filepath, 'r') as f:
-        lines = f.readlines()
-
-    for line in lines:
-        if ';' not in line or '-' not in line:
-            continue
-
-        parts = line.split(';')
-        time_range = parts[0].strip()
-        event_type = parts[2].strip()
-
-        date_str, times = time_range.split(' ')
-        start_time, end_time = times.split('-')
-
-        start = pd.to_datetime(f"{date_str} {start_time}".replace(',', '.'),
-                               format='%d.%m.%Y %H:%M:%S.%f')
-        end = pd.to_datetime(f"{date_str} {end_time}".replace(',', '.'),
-                             format='%d.%m.%Y %H:%M:%S.%f')
-
-        if end < start:
-            end += pd.Timedelta(days=1)
-
-        events.append({'start': start, 'end': end, 'label': event_type})
-
-    return pd.DataFrame(events)
+from vis import load_signal, load_events
 
 def bandpass_filter(signal, fs):
     low = 0.17
-    high = 0.5
+    high = 0.4
 
-    nyq = 0.5 * fs
+    nyq = 0.5 * fs 
     b, a = butter(4, [low / nyq, high / nyq], btype='band')
     filtered = filtfilt(b, a, signal)
 
@@ -83,9 +33,11 @@ def create_windows(df, events, fs):
 
         window_signal = values[start:end]
         window_start_time = timestamps.iloc[start]
-        window_end_time = timestamps.iloc[end]
+        window_end_time = timestamps.iloc[end-1]
 
         label = "Normal"
+        best_overlap = 0
+        best_label = "Normal"
 
         for _, ev in events.iterrows():
             overlap_start = max(window_start_time, ev['start'])
@@ -93,9 +45,12 @@ def create_windows(df, events, fs):
 
             overlap = (overlap_end - overlap_start).total_seconds()
 
-            if overlap > 15:  # more than 50% of 30 sec
-                label = ev['label']
-                break
+            if overlap > best_overlap  :  # the event with maximum overlap 
+                best_overlap = overlap
+                best_label = ev['event_type']
+        
+        if best_overlap > 0.5*window_sec:
+            label = best_label
 
         dataset.append({
             'start_time': window_start_time,
@@ -122,7 +77,7 @@ def main():
 
         print(f"Processing {participant}...")
 
-        # find airflow file
+        # finding participant data files
         flow_file = None
         event_file = None
 
@@ -139,22 +94,16 @@ def main():
         df = load_signal(flow_file)
         events = load_events(event_file)
 
-        # estimate sampling frequency
         dt = (df['timestamp'].iloc[1] - df['timestamp'].iloc[0]).total_seconds()
-        fs = 1 / dt
+        fs = 1 / dt # estimating sampling frequency
 
-        # filter
-        df['value'] = bandpass_filter(df['value'].values, fs)
+        df['value'] = bandpass_filter(df['value'].values, fs) # filter
 
-        # create dataset
-        dataset = create_windows(df, events, fs)
-
-        # save
-        out_path = os.path.join(args.out_dir, f"{participant}_dataset.csv")
+        dataset = create_windows(df, events, fs) # creating dataset
+        out_path = os.path.join(args.out_dir, f"{participant}_dataset.csv") # saving dataset
         dataset.to_csv(out_path, index=False)
 
         print(f"Saved: {out_path}")
-
 
 if __name__ == '__main__':
     main()
