@@ -65,7 +65,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('-in_dir', required=True)
     parser.add_argument('-out_dir', required=True)
-    parser.add_argument('--force', action='store_true')
+    parser.add_argument('--force', action='store_true') # use this flag to regenerate all datasets
     args = parser.parse_args()
 
     os.makedirs(args.out_dir, exist_ok=True)
@@ -103,7 +103,7 @@ def main():
         out_path = os.path.join(args.out_dir, f"{participant}_dataset.csv")
 
         if os.path.exists(out_path) and not args.force:
-            print(f"Skipping {participant} (already processed)")
+            print(f"Skipping {participant} (already processed)") # only generated datasets which don't exist
             continue
 
         dataset = create_windows(df, events, fs) 
