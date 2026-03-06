@@ -6,15 +6,15 @@ class CNN1D(nn.Module):
         super(CNN1D, self).__init__()
 
         self.features = nn.Sequential(
-            nn.Conv1d(1, 16, kernel_size=5, padding=2),
+            nn.Conv1d(1, 16, kernel_size=5, padding=2), # 1st layer
             nn.ReLU(),
             nn.MaxPool1d(2),
 
-            nn.Conv1d(16, 32, kernel_size=5, padding=2),
+            nn.Conv1d(16, 32, kernel_size=5, padding=2), # 2nd layer
             nn.ReLU(),
             nn.MaxPool1d(2),
 
-            nn.Conv1d(32, 64, kernel_size=3, padding=1),
+            nn.Conv1d(32, 64, kernel_size=3, padding=1), # 3rd layer
             nn.ReLU(),
 
             nn.AdaptiveAvgPool1d(1)

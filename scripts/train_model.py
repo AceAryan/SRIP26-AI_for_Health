@@ -29,8 +29,8 @@ def load_participant(file_path):
 
     for _, row in df.iterrows():
         signal = np.array(ast.literal_eval(row['signal']))
-        signals.append(signal)
-        labels.append(row['label'])
+        signals.append(signal) # (no. of windows, signal length)
+        labels.append(row['label']) # (no. of windows)
 
     return np.array(signals), np.array(labels)
 
@@ -56,7 +56,7 @@ def main():
 
     # Fit encoder on all labels
     all_labels = []
-    for _, (_, y) in participants.items():
+    for name, (X, y) in participants.items():
         all_labels.extend(y)
 
     label_encoder.fit(all_labels)
@@ -89,11 +89,9 @@ def main():
         # ----------------------------
         # Per-window normalization
         # ----------------------------
-        X_train = (X_train - np.mean(X_train, axis=1, keepdims=True)) / \
-                  (np.std(X_train, axis=1, keepdims=True) + 1e-8)
+        X_train = (X_train - np.mean(X_train, axis=1, keepdims=True)) / (np.std(X_train, axis=1, keepdims=True) + 1e-8)
 
-        X_test = (X_test - np.mean(X_test, axis=1, keepdims=True)) / \
-                 (np.std(X_test, axis=1, keepdims=True) + 1e-8)
+        X_test = (X_test - np.mean(X_test, axis=1, keepdims=True)) / (np.std(X_test, axis=1, keepdims=True) + 1e-8)
 
         y_train = label_encoder.transform(y_train)
         y_test = label_encoder.transform(y_test)
